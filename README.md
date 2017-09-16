@@ -6,7 +6,7 @@ Install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/as
 To open the panel, `ctrl+u`.
 
 TODO:
-* Persist in localStorage
 * Reset state and reload boards on navigation
+* Clean up everything
 
 License: [WTFPL](./LICENSE.md)

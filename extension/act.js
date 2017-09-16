@@ -1,37 +1,56 @@
 ;((window, document) => {
-  const columnsMap = {}
-  const visibilityMap = {}
-
   /*
-  const visibilityMap = window.localStorage[document.title] || {}
-  const throttle = (fn, wait, context = this) => {
-    let timeout = null
-    let cbArgs = null
+  const store = (state = {}) => {
+    let ls = []
 
-    const later = () => {
-      fn.apply(context, ...cbArgs)
-      timeout = null
-    }
-
-    return (...args) => {
-      if (!timeout) {
-        cbArgs = args
-        timeout = setTimeout(later, wait)
-      }
+    return {
+      subscribe: (l) => {
+        ls.push(l)
+      },
+      unsubscribe: (l) => {
+        if (ls.includes(l)) {
+          ls.splice(ls.indexOf(l), 1)
+        }
+      },
+      setState: (n) => {
+        const p = state
+        state = Object.assign(
+          {},
+          p,
+          typeof n === 'function' ? n(p) : n
+        )
+        for (let i = 0; i < ls.length; i++) {
+          ls[i](state, p)
+        }
+      },
+      getState: () => state
     }
   }
 
-  const saveSelection = throttle(() => {
-    window.localStorage[document.title] = visibilityMap
-  }, 1000)
-  target.addEventListener('change', saveSelection)
+  const getkeybyvalue = (object, value) =>
+    Object.keys(object).find((key) => object[key].toLowerCase() === value.toLowerCase())
+
+  const boolToDisplay = {
+    block: true,
+    none: false
+  }
   */
+
+  const columnsMap = {}
+  const visibilityMap = window.localStorage[document.title]
+    ? JSON.parse(window.localStorage[document.title])
+    : {}
+
+  const saveSelection = () => {
+    window.localStorage[document.title] = JSON.stringify(visibilityMap)
+  }
 
   const target = document.createElement('div')
   target.style.display = 'none'
   target.id = 'asana-column-toggle'
   document.body.appendChild(target)
 
+  target.addEventListener('change', saveSelection)
   target.style.height = '100%'
   target.style.width = '200px'
   target.style.border = 'none'
@@ -54,8 +73,14 @@
 
     headers.forEach((key, i) => {
       columnsMap[key] = allColumns[i]
-      visibilityMap[key] = true
+      if (visibilityMap[key] === undefined) {
+        visibilityMap[key] = true
+      }
+      columnsMap[key].style.display = visibilityMap[key] ? 'block' : 'none'
     })
+
+    // here, we should also run through headers and see if any of the ones in localstorage no longer
+    // exist. if that's the case, delete them so we're not storing extra crap needlessly.
 
     const toggleVisibility = (column) => {
       columnsMap[column].style.display = visibilityMap[column] ? 'none' : 'block'
