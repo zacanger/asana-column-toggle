@@ -27,8 +27,8 @@
     }
   }
 
-  const getkeybyvalue = (object, value) =>
-    Object.keys(object).find((key) => object[key].toLowerCase() === value.toLowerCase())
+  const getKeyByValue = (value, object) =>
+    Object.keys(object).find((key) => object[key] === value)
 
   const boolToDisplay = {
     block: true,
@@ -37,10 +37,7 @@
   */
 
   const columnsMap = {}
-  const visibilityMap = window.localStorage[document.title]
-    ? JSON.parse(window.localStorage[document.title])
-    : {}
-
+  const visibilityMap = JSON.parse(window.localStorage[document.title] || '{}')
   const saveSelection = () => {
     window.localStorage[document.title] = JSON.stringify(visibilityMap)
   }

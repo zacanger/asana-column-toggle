@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://app.asana.com/*/board"
+        "https://app.asana.com/*"
       ],
       "js": [
         "act.js"
