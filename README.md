@@ -1,7 +1,12 @@
 # asana column toggle
 
-Chrome extension to toggle columns in Asana boards.
+Chrome extension to toggle visibility of columns in Asana boards.
 
-[chrome extension link](http://example.com)
+Install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/asana-column-toggle/liblbldpjffmmghimkblofabpljgkjmn).
+To open the panel, `ctrl+u`.
 
-License: WTFPL
+TODO:
+* Persist in localStorage
+* Reset state and reload boards on navigation
+
+License: [WTFPL](./LICENSE.md)
