@@ -76,8 +76,11 @@
       columnsMap[key].style.display = visibilityMap[key] ? 'block' : 'none'
     })
 
-    // here, we should also run through headers and see if any of the ones in localstorage no longer
-    // exist. if that's the case, delete them so we're not storing extra crap needlessly.
+    Object.keys(visibilityMap).forEach((k) => {
+      if (!headers.includes(k)) {
+        delete visibilityMap[k]
+      }
+    })
 
     const toggleVisibility = (column) => {
       columnsMap[column].style.display = visibilityMap[column] ? 'none' : 'block'
