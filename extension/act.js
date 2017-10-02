@@ -1,5 +1,7 @@
 ;((window, document) => {
   /*
+  // minimal store type thing
+  // i should use this instead of basically treating the dom as a store
   const store = (state = {}) => {
     let ls = []
 
@@ -14,14 +16,10 @@
       },
       setState: (n) => {
         const p = state
-        state = Object.assign(
-          {},
-          p,
-          typeof n === 'function' ? n(p) : n
-        )
-        for (let i = 0; i < ls.length; i++) {
-          ls[i](state, p)
-        }
+        state = Object.assign({}, p, typeof n === 'function' ? n(p) : n)
+        ls.forEach((l) => {
+          l(state, p)
+        })
       },
       getState: () => state
     }
@@ -36,18 +34,12 @@
   }
   */
 
-  const columnsMap = {}
-  const visibilityMap = JSON.parse(window.localStorage[document.title] || '{}')
-  const saveSelection = () => {
-    window.localStorage[document.title] = JSON.stringify(visibilityMap)
-  }
-
+  // build the side pane thing
   const target = document.createElement('div')
   target.style.display = 'none'
   target.id = 'asana-column-toggle'
   document.body.appendChild(target)
 
-  target.addEventListener('change', saveSelection)
   target.style.height = '100%'
   target.style.width = '200px'
   target.style.border = 'none'
@@ -64,7 +56,28 @@
   target.style.backgroundColor = '#e5e5e5'
   target.style.color = '#666'
 
-  window.onload = () => {
+  const refreshState = () => {
+    // remove bits from previous board from the dom in the side pane
+    const kids = [ ...target.children ]
+    kids.forEach((kid) => {
+      target.removeChild(kid)
+    })
+
+    // get the board id
+    const h = window.location.href
+    const lastSlash = h.lastIndexOf('/')
+    const firstSplit = h.substr(0, lastSlash)
+    const id = firstSplit.substring(firstSplit.lastIndexOf('/')).substr(1)
+
+    const columnsMap = {}
+    // get settings from local storage if they exist
+    const visibilityMap = JSON.parse(window.localStorage[id] || '{}')
+    const saveSelection = () => {
+      window.localStorage[id] = JSON.stringify(visibilityMap)
+    }
+    // save settings on every selection change
+    target.addEventListener('change', saveSelection)
+
     const allColumns = [ ...document.getElementsByClassName('BoardBody-columnSortableListSortableItem') ]
     const headers = allColumns.map((column) => column.firstElementChild.firstElementChild.textContent)
 
@@ -76,6 +89,7 @@
       columnsMap[key].style.display = visibilityMap[key] ? 'block' : 'none'
     })
 
+    // clean up potentially removed columns
     Object.keys(visibilityMap).forEach((k) => {
       if (!headers.includes(k)) {
         delete visibilityMap[k]
@@ -87,6 +101,7 @@
       visibilityMap[column] = !visibilityMap[column]
     }
 
+    // build each toggle
     headers.forEach((columnName) => {
       const div = document.createElement('div')
       const label = document.createElement('label')
@@ -113,6 +128,19 @@
     })
   }
 
+  // load it up the first time
+  window.onload = refreshState
+
+  // poll for url changes
+  let currentPage = window.location.href
+  setInterval(() => {
+    if (window.location.href !== currentPage) {
+      refreshState()
+      currentPage = window.location.href
+    }
+  }, 1000)
+
+  // toggle open/closed with ctrl+u
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && (e.code === 'KeyU' || e.keyCode === 85)) {
       if (target.style.display === 'none') {
