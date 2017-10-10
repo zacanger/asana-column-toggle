@@ -5,9 +5,9 @@ Chrome extension to toggle visibility of columns in Asana boards.
 Install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/asana-column-toggle/liblbldpjffmmghimkblofabpljgkjmn).
 To open the panel, `ctrl+u`.
 
-## Roadmap
+## Roadmap/Known Issues
+
 * [ ] Clean up the code
-* [ ] Move it to a background page instead of a content script (so it can use a
-  popup thing instead of a hotkey loading a panel on the page)
+* [ ] Sometimes refresh is needed to properly reset...?
 
 License: [WTFPL](./LICENSE.md)
