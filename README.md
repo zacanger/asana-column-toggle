@@ -11,4 +11,4 @@ To open the panel, `ctrl+u`.
 
 * Sometimes refresh is needed to properly reset...?
 
-License: [WTFPL](./LICENSE.md)
+License: [MIT](./LICENSE.md)
